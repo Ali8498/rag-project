@@ -177,3 +177,62 @@ def ingest(file_path, progress_callback=None):
     print("=" * 50)
     print("🎉 ایندکس شد!")
     return "success"
+
+def vacuum_database():
+    """
+    بهینه‌سازی و فشرده‌سازی بانک اطلاعاتی
+    بعد از حذف‌های زیاد باید اجرا بشه
+    مثل defragment کردن هارد دیسک
+    """
+    import shutil
+    import tempfile
+    
+    print("🔄 شروع Vacuum بانک اطلاعاتی...")
+    
+    try:
+        # قدم ۱ — گرفتن همه داده‌های معتبر
+        vs = get_vectorstore()
+        results = vs.get()
+        
+        if not results or not results.get("ids"):
+            print("✅ بانک خالیه — نیازی به Vacuum نیست")
+            return 0
+        
+        total_before = len(results["ids"])
+        print(f"📊 تعداد chunk قبل از Vacuum: {total_before}")
+        
+        # قدم ۲ — ذخیره موقت داده‌ها
+        documents = results.get("documents", [])
+        metadatas = results.get("metadatas", [])
+        ids = results.get("ids", [])
+        
+        # قدم ۳ — پاک کردن بانک قدیمی
+        if os.path.exists(CHROMA_PATH):
+            shutil.rmtree(CHROMA_PATH)
+            print("🗑️ بانک قدیمی پاک شد")
+        
+        # قدم ۴ — ساخت بانک جدید با داده‌های تمیز
+        embedding_model = get_embedding_model()
+        new_vs = get_vectorstore(embedding_model)
+        
+        # قدم ۵ — اضافه کردن داده‌ها به بانک جدید
+        if documents:
+            batch_size = 50
+            for i in range(0, len(documents), batch_size):
+                batch_docs = documents[i:i+batch_size]
+                batch_meta = metadatas[i:i+batch_size]
+                batch_ids = ids[i:i+batch_size]
+                new_vs._collection.add(
+                    documents=batch_docs,
+                    metadatas=batch_meta,
+                    ids=batch_ids
+                )
+        
+        total_after = len(documents)
+        print(f"✅ Vacuum کامل شد!")
+        print(f"📊 تعداد chunk بعد از Vacuum: {total_after}")
+        return total_after
+        
+    except Exception as e:
+        print(f"❌ خطا در Vacuum: {e}")
+        return -1
