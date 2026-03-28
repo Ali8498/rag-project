@@ -135,16 +135,6 @@ python ingest.py
 python rag.py
 ```
 
-### 🔮 برنامه آینده
-- [x] سیستم RAG پایه
-- [x] پشتیبانی از PDF و TXT
-- [x] انتشار روی GitHub
-- [ ] رابط کاربری Streamlit
-- [ ] پشتیبانی از ۱۰۰+ فایل PDF
-- [ ] ذکر منبع (کتاب + صفحه)
-- [ ] Docker
-- [ ] CI/CD Pipeline
-
 ---
 
 ## 📁 Project Structure / ساختار پروژه
