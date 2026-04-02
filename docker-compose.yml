@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  rag:
+    build: .
+    container_name: rag_system
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    volumes:
+      - chroma_data:/app/chroma_db
+    env_file:
+      - .env
+
+volumes:
+  chroma_data:
+    driver: local

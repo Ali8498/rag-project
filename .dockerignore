@@ -1,0 +1,15 @@
+venv/
+.env
+chroma_db/
+*.pdf
+*.txt
+temp_*
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
